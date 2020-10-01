@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import { Card } from '@material-ui/core';
@@ -194,7 +194,7 @@ export default function SignUp() {
               </Modal>
               <Grid container justify='center'>
                 <Grid item>
-                  <Link href='/Login' variant='body2'>
+                  <Link to='/Login' variant='body2'>
                     Already have an account? Login
                   </Link>
                 </Grid>
