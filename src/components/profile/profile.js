@@ -34,7 +34,7 @@ const Profile = () => {
 
   useEffect(() => {
     console.log('hello', userName);
-    if (typeof userName !== 'undefined' && userName !== null) {
+    if (typeof userName === 'undefined' || userName === 'null') {
       history.replace('/');
     }
   }, [history, userName]);
