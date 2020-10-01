@@ -100,9 +100,9 @@ export default function SignUp() {
       emailValidation(email) &&
       passwordValidation(password)
     ) {
-      localStorage.setItem('username', JSON.stringify(userName));
-      localStorage.setItem('email', JSON.stringify(email));
-      localStorage.setItem('password', JSON.stringify(password));
+      localStorage.setItem('username', userName);
+      localStorage.setItem('email', email);
+      localStorage.setItem('password', password);
       handleOpen();
       setTimeout(() => {
         handleClose();
