@@ -1,24 +1,38 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
+import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import { Card } from '@material-ui/core';
 import { Box } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import Modal from '@material-ui/core/Modal';
+import Fade from '@material-ui/core/Fade';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import {
+  emailValidation,
+  passwordValidation,
+  usernameValidation,
+} from '../utils/validation';
 
 const useStyles = makeStyles((theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   paper: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: '10px',
+    color: '#3f51b5',
   },
   form: {
     width: '90%', // Fix IE 11 issue.
@@ -32,15 +46,13 @@ const useStyles = makeStyles((theme) => ({
 const ValidationTextField = withStyles({
   root: {
     '& input:valid + fieldset': {
-        borderColor:'#3f51b5',
+      borderColor: '#3f51b5',
       borderWidth: 2,
     },
     '& input:invalid + fieldset': {
       borderColor: 'red',
-      color:'red',
+      color: 'red',
       borderWidth: 2,
-      
-      
     },
     '& input:valid:focus + fieldset': {
       borderLeftWidth: 2,
@@ -52,42 +64,51 @@ const ValidationTextField = withStyles({
 export default function SignUp() {
   const classes = useStyles();
 
-const [userName, setUserName] = useState('');
-const [email, setEmail] = useState('');
-const [password, setPassword] = useState('');
+  const [userName, setUserName] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [open, setOpen] = React.useState(false);
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
+  const handleClose = () => {
+    setOpen(false);
+    history.push('/profile');
+  };
 
-const handleUserName = (e) =>{
+  const handleUserName = (e) => {
     setUserName(e.target.value);
-
-}
-const handleEmail = (e) =>{
+  };
+  const handleEmail = (e) => {
     setEmail(e.target.value);
-
-}
-const handlePassword =  (e)  =>{
+  };
+  const handlePassword = (e) => {
     setPassword(e.target.value);
-}
+  };
 
-const handleformSubmit = (e) =>{
-    
-        e.preventDefault();
+  let history = useHistory();
 
-       if (localStorage.getItem('document')) {
-        setUserName(userName);
-        setEmail(email);
-        setPassword(password)
-        } else {
-            setUserName('');
-                setPassword('')
-        }
-
-    localStorage.setItem('username',JSON.stringify(userName));
-     localStorage.setItem('email',JSON.stringify(email));
-    localStorage.setItem('password',JSON.stringify(password));
-   
-}
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (
+      userName !== null &&
+      email !== null &&
+      password !== null &&
+      usernameValidation(userName) &&
+      emailValidation(email) &&
+      passwordValidation(password)
+    ) {
+      localStorage.setItem('username', JSON.stringify(userName));
+      localStorage.setItem('email', JSON.stringify(email));
+      localStorage.setItem('password', JSON.stringify(password));
+      handleOpen();
+      setTimeout(() => {
+        handleClose();
+      }, 5000);
+    }
+  };
 
   return (
     <Box m={1}>
@@ -102,51 +123,47 @@ const handleformSubmit = (e) =>{
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={12}>
                   <ValidationTextField
+                    error={!usernameValidation(userName)}
                     autoComplete='fname'
                     name='Username'
                     variant='outlined'
-                    required
                     fullWidth
                     id='firstName'
                     label='Username'
                     autoFocus
-                    onChange={(e) => handleUserName(e) }
-                     helperText={userName === "" ? 'Username is required!' : ' '}
+                    onChange={(e) => handleUserName(e)}
+                    helperText={
+                      !usernameValidation(userName) && 'Username is not valid'
+                    }
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <ValidationTextField
+                    error={!emailValidation(email)}
                     variant='outlined'
-                    required
                     fullWidth
                     id='email'
                     label='Email Address'
                     name='email'
                     autoComplete='email'
-                    onChange={(e) => handleEmail(e) }
-                     helperText={email === "" ? 'Email is required!' : ' '}
+                    onChange={(e) => handleEmail(e)}
+                    helperText={!emailValidation(email) && 'Email is not valid'}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <ValidationTextField
+                    error={!passwordValidation(password)}
                     variant='outlined'
-                    required
                     fullWidth
                     name='password'
                     label='Password'
                     type='password'
                     id='password'
                     autoComplete='current-password'
-                    onChange={(e) => handlePassword(e) }
-                    helperText={password === "" ? 'Password is required!' : ' '}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox value='allowExtraEmails' color='primary' />
+                    onChange={(e) => handlePassword(e)}
+                    helperText={
+                      !passwordValidation(password) && 'Password is not valid'
                     }
-                    label='I have read and agree to the Privacy Policy'
                   />
                 </Grid>
               </Grid>
@@ -156,10 +173,25 @@ const handleformSubmit = (e) =>{
                 variant='contained'
                 color='primary'
                 className={classes.submit}
-                onClick={(e) => handleformSubmit(e)}
+                onClick={(e) => handleFormSubmit(e)}
               >
                 Sign Up
               </Button>
+              <Modal
+                aria-labelledby='transition-modal-title'
+                aria-describedby='transition-modal-description'
+                className={classes.modal}
+                open={open}
+                closeAfterTransition
+              >
+                <Fade in={open}>
+                  <div className={classes.paper}>
+                    <p id='transition-modal-description'>
+                      Thank You For Registering !
+                    </p>
+                  </div>
+                </Fade>
+              </Modal>
               <Grid container justify='center'>
                 <Grid item>
                   <Link href='/Login' variant='body2'>
