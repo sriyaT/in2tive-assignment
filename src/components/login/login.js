@@ -126,7 +126,7 @@ export default function Login() {
                     variant='outlined'
                     fullWidth
                     id='firstName'
-                    label='Username / Email'
+                    label='Username'
                     autoFocus
                     onChange={(e) => handleUserName(e)}
                     helperText={
