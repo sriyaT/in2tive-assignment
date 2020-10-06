@@ -85,13 +85,17 @@ export default function Login() {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    console.log('====..', userName, SignedUpUserName);
 
     if (
+      userName !== null &&
+      password !== null &&
       usernameValidation(userName) &&
       passwordValidation(password) &&
       userName === SignedUpUserName &&
       password === SignedUpPassword
     ) {
+      console.log('====..', userName, SignedUpUserName);
       handleOpen();
       setTimeout(() => {
         handleClose();
